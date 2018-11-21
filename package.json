@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/akshayr11/node-todo#readme",
   "dependencies": {
-    "mongodb": "^3.1.10"
+    "mongodb": "^3.1.10",
+    "mongoose": "^5.3.13"
   }
 }
