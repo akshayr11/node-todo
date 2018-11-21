@@ -11,7 +11,8 @@ MongoClient.connect(
 		const db = client.db("TodoApp");
 		db.collection("Todos").insertOne(
 			{
-				text: "Test Todo",
+				task: "learn Node",
+				completed: false
 			},
 			(err, results) => {
 				if (err) {
