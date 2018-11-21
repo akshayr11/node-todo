@@ -31,6 +31,31 @@ app.get("/todos", (req, res) => {
 	);
 });
 
+app.post("/user", (req, res) => {
+	const todo = new User({
+		email: req.body.email
+	});
+	todo.save().then(
+		doc => {
+			res.send(doc);
+		},
+		e => {
+			res.status(400).send(e);
+		}
+	);
+});
+
+app.get("/user", (req, res) => {
+	User.find().then(
+		users => {
+			res.send({ users });
+		},
+		err => {
+			res.status(400).send(err);
+		}
+	);
+});
+
 app.listen(3000, () => {
 	console.log(`Started on port 3000`);
 });

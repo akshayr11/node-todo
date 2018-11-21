@@ -17,7 +17,7 @@ const Todo = mongoose.model("Todo", {
 	}
 });
 
-const User = mongoose.model("user", {
+const User = mongoose.model("User", {
 	email: {
 		type: String,
 		required: true,

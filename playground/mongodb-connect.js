@@ -9,7 +9,7 @@ MongoClient.connect(
 		}
 		console.log("Connected to MongoDb server");
 		const db = client.db("TodoApp");
-		db.collection("Todos").insertOne(
+		db.collection("Users").insertOne(
 			{
 				task: "learn Node",
 				completed: false
