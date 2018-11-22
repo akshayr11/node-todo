@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const { ObjectId } = require("mongodb");
 const { mongoose } = require("./db/mongoose");
-const { Todo } = require("./model");
+const { Todo, User } = require("./model");
 const { pick, isBoolean } = require("lodash");
 
 const app = express();
@@ -97,6 +97,20 @@ app.patch("/todos/:id", (req, res) => {
 			res.status(400).send();
 		}
 	);
+});
+
+// User Routes
+app.post("/users", (req, res) => {
+	const body = pick(req.body, ["email", "password"]);
+	const user = new User(body);
+	user
+		.save()
+		.then(user => {
+			res.send(user);
+		})
+		.catch(e => {
+			res.status(400).send(e);
+		});
 });
 
 app.listen(port, () => {
