@@ -33,14 +33,23 @@ if (!ObjectId.isValid(id)) {
 // 	});
 
 // User collection
-User.findById(userId).then(
-	user => {
-		if (!user) {
-			return console.log("User not found");
-		}
-		console.log(`User By Id: ${user}`);
-	},
-	e => {
-		console.log(e);
-	}
-);
+// User.findById(userId).then(
+// 	user => {
+// 		if (!user) {
+// 			return console.log("User not found");
+// 		}
+// 		console.log(`User By Id: ${user}`);
+// 	},
+// 	e => {
+// 		console.log(e);
+// 	}
+// );
+
+// Delete Methods
+// Todo.findOneAndRemove({ _id: "5bf53ac18dffe05ab6c62639" }).then(todo => {
+// 	console.log(todo);
+// });
+
+// Todo.findByIdAndRemove("5bf526197632bc4b78a0f180").then(todo => {
+// 	console.log(todo);
+// });

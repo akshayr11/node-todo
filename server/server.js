@@ -2,11 +2,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const { ObjectId } = require("mongodb");
 const { mongoose } = require("./db/mongoose");
-const { Todo, User } = require("./model");
+const { Todo } = require("./model");
 
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
+// create a todo by post method
 app.post("/todos", (req, res) => {
 	const todo = new Todo({
 		text: req.body.text
@@ -36,43 +37,36 @@ app.get("/todos", (req, res) => {
 app.get("/todos/:id", (req, res) => {
 	const id = req.params.id;
 	if (!ObjectId.isValid(id)) {
-		return res.status(400).send();
+		return res.status(404).send();
 	}
 	Todo.findById(id).then(
 		todo => {
 			res.send({ todo });
 		},
 		() => {
-			res.status(404).send();
+			res.status(400).send();
 		}
 	);
 });
 
-app.post("/user", (req, res) => {
-	const todo = new User({
-		email: req.body.email
-	});
-	todo.save().then(
-		doc => {
-			res.send(doc);
+// delete a todo
+app.delete("/todos/:id", (req, res) => {
+	const id = req.params.id;
+	if (!ObjectId.isValid(id)) {
+		return res.status(404).send();
+	}
+	Todo.findByIdAndRemove(id).then(
+		todo => {
+			if (!todo) {
+				return res.status(404).send();
+			}
+			res.send({ todo });
 		},
-		e => {
-			res.status(400).send(e);
+		() => {
+			res.status(400).send();
 		}
 	);
 });
-
-app.get("/user", (req, res) => {
-	User.find().then(
-		users => {
-			res.send({ users });
-		},
-		err => {
-			res.status(400).send(err);
-		}
-	);
-});
-
 app.listen(port, () => {
 	console.log(`Started on port ${port}`);
 });
