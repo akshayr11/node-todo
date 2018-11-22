@@ -1,25 +1,29 @@
 {
-  "name": "todo",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/akshayr11/node-todo.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/akshayr11/node-todo/issues"
-  },
-  "homepage": "https://github.com/akshayr11/node-todo#readme",
-  "dependencies": {
-    "body-parser": "^1.18.3",
-    "express": "^4.16.4",
-    "mongodb": "^3.1.10",
-    "mongoose": "^5.3.13"
-  }
+	"name": "todo",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node server/server.js"
+	},
+	"engines": {
+		"node": "10.9.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/akshayr11/node-todo.git"
+	},
+	"author": "Akshay",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/akshayr11/node-todo/issues"
+	},
+	"homepage": "https://github.com/akshayr11/node-todo#readme",
+	"dependencies": {
+		"body-parser": "^1.18.3",
+		"express": "^4.16.4",
+		"mongodb": "^3.1.10",
+		"mongoose": "^5.3.13"
+	}
 }
