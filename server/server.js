@@ -102,3 +102,19 @@ app.patch("/todos/:id", (req, res) => {
 app.listen(port, () => {
 	console.log(`Started on port ${port}`);
 });
+
+// in update route instead of using lodash, same code can be written in vaniala js
+// const body = {};
+// if (req.body.hasOwnProperty("text")) {
+// 	body.text = req.body.text;
+// }
+// if (req.body.hasOwnProperty("completed")) {
+// 	body.completed = req.body.completed;
+// }
+// if (typeof body.completed === "boolean" && body.completed) {
+// 	body.completedAt = new Date().getTime();
+// } else {
+// 	body.completed = false;
+// 	body.completedAt = null;
+// }
+// isBoolean can be replaced by typeof(completed) === 'boolean'
