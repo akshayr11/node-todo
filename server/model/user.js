@@ -37,7 +37,7 @@ const UserSchema = new mongoose.Schema({
 UserSchema.methods.generateAuthToken = function() {
 	var user = this;
 	const access = "auth";
-	const token = jwt.sign({ _id: user._id.toHexString(), access }, "abc123").toString();
+	const token = jwt.sign({ _id: user._id.toHexString(), access }, "secret-key").toString();
 	user.tokens = user.tokens.concat([{ access, token }]);
 	return user.save().then(() => {
 		return token;
@@ -48,7 +48,7 @@ UserSchema.statics.findByToken = function(token) {
 	const User = this;
 	let decoded;
 	try {
-		decoded = jwt.verify(token, "abc123");
+		decoded = jwt.verify(token, "secret-key");
 	} catch (error) {
 		return Promise.reject();
 	}
@@ -59,6 +59,22 @@ UserSchema.statics.findByToken = function(token) {
 	});
 };
 
+UserSchema.statics.findByCredentials = function(email, password) {
+	const User = this;
+	return User.findOne({ email }).then(user => {
+		if (!user) {
+			return Promise.reject();
+		}
+		return new Promise((resolve, reject) => {
+			bcrypt.compare(password, user.password, (err, valid) => {
+				if (err || !valid) {
+					reject(err);
+				}
+				resolve(user);
+			});
+		});
+	});
+};
 UserSchema.pre("save", function(next) {
 	const user = this;
 	if (user.isModified("password")) {
