@@ -2,9 +2,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const { ObjectId } = require("mongodb");
 const { mongoose } = require("./db/mongoose");
-const { Todo, User } = require("./model");
+const { Todo } = require("./model/todo");
+const { User } = require("./model/user");
 const { pick, isBoolean } = require("lodash");
-
+const { authenticate } = require("./middleware/authenticate");
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
@@ -116,22 +117,10 @@ app.post("/users", (req, res) => {
 		});
 });
 
+app.get("/users/me", authenticate, (req, res) => {
+	res.send(req.user);
+});
+
 app.listen(port, () => {
 	console.log(`Started on port ${port}`);
 });
-
-// in update route instead of using lodash, same code can be written in vaniala js
-// const body = {};
-// if (req.body.hasOwnProperty("text")) {
-// 	body.text = req.body.text;
-// }
-// if (req.body.hasOwnProperty("completed")) {
-// 	body.completed = req.body.completed;
-// }
-// if (typeof body.completed === "boolean" && body.completed) {
-// 	body.completedAt = new Date().getTime();
-// } else {
-// 	body.completed = false;
-// 	body.completedAt = null;
-// }
-// isBoolean can be replaced by typeof(completed) === 'boolean'

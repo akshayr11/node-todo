@@ -2,24 +2,6 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
 const { pick } = require("lodash");
-
-const Todo = mongoose.model("Todo", {
-	text: {
-		type: String,
-		required: [true, "Enter a todo"],
-		minLength: 1,
-		trim: true
-	},
-	completed: {
-		type: Boolean,
-		default: false
-	},
-	completedAt: {
-		type: Number,
-		default: null
-	}
-});
-
 const UserSchema = new mongoose.Schema({
 	email: {
 		type: String,
@@ -61,6 +43,21 @@ UserSchema.methods.generateAuthToken = function() {
 	});
 };
 
+UserSchema.statics.findByToken = function(token) {
+	const User = this;
+	let decoded;
+	try {
+		decoded = jwt.verify(token, "abc123");
+	} catch (error) {
+		return Promise.reject();
+	}
+	return User.findOne({
+		_id: decoded._id,
+		"tokens.token": token,
+		"tokens.access": "auth"
+	});
+};
+
 UserSchema.methods.toJSON = function() {
 	var user = this;
 	const userObject = user.toObject();
@@ -69,4 +66,4 @@ UserSchema.methods.toJSON = function() {
 
 const User = mongoose.model("User", UserSchema);
 
-module.exports = { Todo, User };
+module.exports = { User };
