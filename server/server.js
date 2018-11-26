@@ -1,3 +1,5 @@
+require("./config/config");
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const { ObjectId } = require("mongodb");
@@ -7,7 +9,7 @@ const { User } = require("./model/user");
 const { pick, isBoolean } = require("lodash");
 const { authenticate } = require("./middleware/authenticate");
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 app.use(bodyParser.json());
 // create a todo by post method
 app.post("/todos", authenticate, (req, res) => {
