@@ -40,12 +40,15 @@ app.get("/todos", authenticate, (req, res) => {
 });
 
 // get todos by id
-app.get("/todos/:id", (req, res) => {
+app.get("/todos/:id", authenticate, (req, res) => {
 	const id = req.params.id;
 	if (!ObjectId.isValid(id)) {
 		return res.status(404).send();
 	}
-	Todo.findById(id).then(
+	Todo.findOne({
+		_id: id,
+		_creator: req.user._id
+	}).then(
 		todo => {
 			res.send({ todo });
 		},
@@ -56,12 +59,15 @@ app.get("/todos/:id", (req, res) => {
 });
 
 // delete a todo
-app.delete("/todos/:id", (req, res) => {
+app.delete("/todos/:id", authenticate, (req, res) => {
 	const id = req.params.id;
 	if (!ObjectId.isValid(id)) {
 		return res.status(404).send();
 	}
-	Todo.findByIdAndRemove(id).then(
+	Todo.findOneAndDelete({
+		_id: id,
+		_creator: req.user._id
+	}).then(
 		todo => {
 			if (!todo) {
 				return res.status(404).send();
@@ -75,7 +81,7 @@ app.delete("/todos/:id", (req, res) => {
 });
 
 // update Route
-app.patch("/todos/:id", (req, res) => {
+app.patch("/todos/:id", authenticate, (req, res) => {
 	const id = req.params.id;
 	const body = pick(req.body, ["text", "completed"]);
 	if (isBoolean(body.completed) && body.completed) {
@@ -84,8 +90,11 @@ app.patch("/todos/:id", (req, res) => {
 		body.completed = false;
 		body.completedAt = null;
 	}
-	Todo.findByIdAndUpdate(
-		id,
+	Todo.findOneAndUpdate(
+		{
+			_id: id,
+			_creator: req.user._id
+		},
 		{
 			$set: body
 		},
