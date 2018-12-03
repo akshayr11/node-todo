@@ -1,18 +1,18 @@
-require("./config/config");
+require('./config/config');
 
-const express = require("express");
-const bodyParser = require("body-parser");
-const { ObjectId } = require("mongodb");
-const { mongoose } = require("./db/mongoose");
-const { Todo } = require("./model/todo");
-const { User } = require("./model/user");
-const { pick, isBoolean } = require("lodash");
-const { authenticate } = require("./middleware/authenticate");
+const express = require('express');
+const bodyParser = require('body-parser');
+const { ObjectId } = require('mongodb');
+const { mongoose } = require('./db/mongoose');
+const { Todo } = require('./model/todo');
+const { User } = require('./model/user');
+const { pick, isBoolean } = require('lodash');
+const { authenticate } = require('./middleware/authenticate');
 const app = express();
 const port = process.env.PORT;
 app.use(bodyParser.json());
 // create a todo by post method
-app.post("/todos", authenticate, (req, res) => {
+app.post('/todos', authenticate, (req, res) => {
 	const todo = new Todo({
 		text: req.body.text,
 		_creator: req.user._id
@@ -28,7 +28,7 @@ app.post("/todos", authenticate, (req, res) => {
 });
 
 // get all todos
-app.get("/todos", authenticate, (req, res) => {
+app.get('/todos', authenticate, (req, res) => {
 	Todo.find({
 		_creator: req.user._id
 	}).then(
@@ -42,7 +42,7 @@ app.get("/todos", authenticate, (req, res) => {
 });
 
 // get todos by id
-app.get("/todos/:id", authenticate, (req, res) => {
+app.get('/todos/:id', authenticate, (req, res) => {
 	const id = req.params.id;
 	if (!ObjectId.isValid(id)) {
 		return res.status(404).send();
@@ -61,7 +61,7 @@ app.get("/todos/:id", authenticate, (req, res) => {
 });
 
 // delete a todo
-app.delete("/todos/:id", authenticate, (req, res) => {
+app.delete('/todos/:id', authenticate, (req, res) => {
 	const id = req.params.id;
 	if (!ObjectId.isValid(id)) {
 		return res.status(404).send();
@@ -83,9 +83,9 @@ app.delete("/todos/:id", authenticate, (req, res) => {
 });
 
 // update Route
-app.patch("/todos/:id", authenticate, (req, res) => {
+app.patch('/todos/:id', authenticate, (req, res) => {
 	const id = req.params.id;
-	const body = pick(req.body, ["text", "completed"]);
+	const body = pick(req.body, ['text', 'completed']);
 	if (isBoolean(body.completed) && body.completed) {
 		body.completedAt = new Date().getTime();
 	} else {
@@ -115,8 +115,8 @@ app.patch("/todos/:id", authenticate, (req, res) => {
 });
 
 // User Routes
-app.post("/users", (req, res) => {
-	const body = pick(req.body, ["email", "password"]);
+app.post('/users', (req, res) => {
+	const body = pick(req.body, ['email', 'password']);
 	const user = new User(body);
 	user
 		.save()
@@ -124,34 +124,32 @@ app.post("/users", (req, res) => {
 			return user.generateAuthToken();
 		})
 		.then(token => {
-			res.header("x-auth", token).send(user);
+			res.header('x-auth', token).send(user);
 		})
 		.catch(e => {
 			res.status(400).send(e);
 		});
 });
 
-app.post("/users/login", (req, res) => {
-	const body = pick(req.body, ["email", "password"]);
-	User.findByCredentials(body.email, body.password)
-		.then(user => {
-			return user.generateAuthToken().then(token => {
-				res.header("x-auth", token).send(user);
-			});
-		})
-		.catch(e => {
-			res.status(400).send();
-		});
+app.post('/users/login', async (req, res) => {
+	try {
+		const body = pick(req.body, ['email', 'password']);
+		const user = await User.findByCredentials(body.email, body.password);
+		const token = await user.generateAuthToken();
+		res.header('x-auth', token).send(user);
+	} catch (error) {
+		res.status(400).send();
+	}
 });
-app.delete("/users/me/token", authenticate, (req, res) => {
-	req.user
-		.removeToken(req.token)
-		.then(() => {
-			res.send();
-		})
-		.catch(() => {});
+app.delete('/users/me/token', authenticate, async (req, res) => {
+	try {
+		await req.user.removeToken(req.token);
+		res.send();
+	} catch (error) {
+		res.status(400).send();
+	}
 });
-app.get("/users/me", authenticate, (req, res) => {
+app.get('/users/me', authenticate, (req, res) => {
 	res.send(req.user);
 });
 
